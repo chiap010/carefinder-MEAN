@@ -24,8 +24,6 @@ const hospitalSchema = new schema({
       },
 });
 
-//module.exports = mongoose.model("hospitals", hospitalSchema);
-
 const options = {
       timestamp: true,
 };
