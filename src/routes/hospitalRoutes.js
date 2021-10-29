@@ -259,6 +259,72 @@ router.get("/", async (req, res) => {
                               });
                         }
                   }
+
+                  // If provider ID is part of the query string
+                  else if (req.query.providerId) {
+                        const hospitalQuery = await Hospital.find({
+                              provider_id: {
+                                    $regex: req.query.providerId,
+                                    $options: "i",
+                              },
+                        }).exec();
+                        if (hospitalQuery && hospitalQuery.length > 0) {
+                              res.status(200).json({ data: hospitalQuery });
+                        } else if (
+                              hospitalQuery &&
+                              hospitalQuery.length === 0
+                        ) {
+                              res.status(404).json({
+                                    data: {
+                                          error:
+                                                stringResources.http404 +
+                                                " - Provider ID: " +
+                                                req.query.providerId,
+                                    },
+                              });
+                        } else {
+                              res.status(400).json({
+                                    data: {
+                                          error: stringResources.http400,
+                                    },
+                              });
+                        }
+                  }
+
+                  // If emergency services is part of the query string
+                  else if (req.query.zipCode) {
+                        const hospitalQuery = await Hospital.find({
+                              zip_code: {
+                                    $regex: req.query.zipCode,
+                                    $options: "i",
+                              },
+                        }).exec();
+                        if (hospitalQuery && hospitalQuery.length > 0) {
+                              res.status(200).json({ data: hospitalQuery });
+                        } else if (
+                              hospitalQuery &&
+                              hospitalQuery.length === 0
+                        ) {
+                              res.status(404).json({
+                                    data: {
+                                          error:
+                                                stringResources.http404 +
+                                                " - Zip Code: " +
+                                                req.query.zipCode,
+                                    },
+                              });
+                        } else {
+                              res.status(400).json({
+                                    data: {
+                                          error: stringResources.http400,
+                                    },
+                              });
+                        }
+                  } else {
+                        res.status(400).json({
+                              data: { error: stringResources.http400 },
+                        });
+                  }
             }
       } catch (err) {
             res.status(400).json({

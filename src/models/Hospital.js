@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 const schema = mongoose.Schema;
 
+const schemaOptions = {
+      timestamp: true,
+};
+
 const hospitalSchema = new schema({
       _id: { type: String },
       provider_id: { type: String },
@@ -24,10 +28,6 @@ const hospitalSchema = new schema({
       },
 });
 
-const options = {
-      timestamp: true,
-};
+const sch = new mongoose.Schema(hospitalSchema, schemaOptions);
 
-const s = new mongoose.Schema(hospitalSchema, options);
-
-module.exports = mongoose.model("hospitals", s);
+module.exports = mongoose.model("hospitals", sch);

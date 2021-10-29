@@ -18,13 +18,7 @@ server.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 server.use(express.urlencoded({ extended: true }));
 
-// simple route
-//app.get("/", (req, res) => {
-//res.json({ message: "Welcome to bezkoder application." });
-//});
-
 // Import our routes
-
 const v1URI = "/api/v1/hospitals";
 
 // Hospital routes
@@ -40,9 +34,11 @@ server.listen(PORT, () => {
 const mongoose = require("mongoose");
 const { application } = require("express");
 
+// Get MongoDB connection string
 require("dotenv").config();
 var uri = process.env.MONGO_CONN;
 
+// Connect to MongoDB
 mongoose.connect(uri, {
       useUnifiedTopology: true,
       useNewUrlParser: true,

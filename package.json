@@ -6,6 +6,7 @@
   "scripts": {
     "start": "nodemon index.js"
   },
+  
   "dependencies": {
     "apikeygen": "^1.1.0",
     "body-parser": "^1.19.0",
