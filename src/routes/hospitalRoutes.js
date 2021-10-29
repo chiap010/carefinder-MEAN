@@ -17,23 +17,10 @@ router.get("/", async (req, res) => {
             }
             // If something in the query string, lets read the query string and find accordingly
             else {
-                  // If city name is part of the query string
-
-                  // TO DOs-- needs 404s
-                  if (req.query.city && !req.query.state) {
+                  // If city and state are part of the query string
+                  if (req.query.city && req.query.state) {
                         await Hospital.find({
                               city: { $regex: req.query.city, $options: "i" },
-                        })
-                              .exec()
-                              .then((response) =>
-                                    res.status(200).json({ data: response })
-                              )
-                              .catch((err) => res.status(400).json(err));
-                  }
-
-                  // If state is part of the query string
-                  if (req.query.state && !req.query.city) {
-                        await Hospital.find({
                               state: { $regex: req.query.state, $options: "i" },
                         })
                               .exec()
@@ -43,8 +30,54 @@ router.get("/", async (req, res) => {
                               .catch((err) => res.status(400).json(err));
                   }
 
+                  // If city name is part of the query string
+                  else if (req.query.city && !req.query.state) {
+                        await Hospital.find({
+                              city: { $regex: req.query.city, $options: "i" },
+                        })
+                              .exec()
+                              .then((response) =>
+                                    res.status(200).json({ data: response })
+                              )
+                              .catch((err) => res.status(400).json(err));
+                  } else if (req.query.state && !req.query.city) {
+
+                  /*
+                  if (req.query.state && !req.query.city) {
+                        await Hospital.find({
+                              state: { $regex: req.query.state, $options: "i" },
+                        })
+                              .exec()
+                              .then((response) => {
+                                    res.status(200).json({ data: response });
+                              })
+                              .catch((err) => res.status(400).json(err));
+                  }
+                  */
+                        const hospital = await Hospital.find({
+                              state: { $regex: req.query.state, $options: "i" },
+                        }).exec();
+                        if (hospital && hospital.length > 0) {
+                              res.status(200).json({ data: hospital });
+                        } else if (hospital && hospital.length === 0) {
+                              res.status(404).json({
+                                    data: {
+                                          error:
+                                                "Returned no records for state:  " +
+                                                req.query.state,
+                                    },
+                              });
+                        } else {
+                              res.status(400).json({
+                                    data: {
+                                          error: "Bad Request",
+                                    },
+                              });
+                        }
+                  }
+
                   // If county name is part of the query string
-                  if (req.query.county) {
+                  else if (req.query.county) {
                         await Hospital.find({
                               county_name: {
                                     $regex: req.query.county,
@@ -59,7 +92,7 @@ router.get("/", async (req, res) => {
                   }
 
                   // If hospital name is part of the query string
-                  if (req.query.name) {
+                  else if (req.query.name) {
                         await Hospital.find({
                               hospital_name: {
                                     $regex: req.query.name,
@@ -74,7 +107,7 @@ router.get("/", async (req, res) => {
                   }
 
                   // If hospital type is part of the query string
-                  if (req.query.type) {
+                  else if (req.query.type) {
                         await Hospital.find({
                               hospital_type: {
                                     $regex: req.query.type,
@@ -89,7 +122,7 @@ router.get("/", async (req, res) => {
                   }
 
                   // If hospital ownership is part of the query string
-                  if (req.query.ownership) {
+                  else if (req.query.ownership) {
                         await Hospital.find({
                               hospital_ownership: {
                                     $regex: req.query.ownership,
@@ -104,7 +137,7 @@ router.get("/", async (req, res) => {
                   }
 
                   // If emergency services is part of the query string
-                  if (req.query.emergency) {
+                  else if (req.query.emergency) {
                         await Hospital.find({
                               emergency_services: {
                                     $regex: req.query.emergency,
@@ -116,23 +149,14 @@ router.get("/", async (req, res) => {
                                     res.status(200).json({ data: response })
                               )
                               .catch((err) => res.status(400).json(err));
-                  }
-
-                  // If city and state are part of the query string
-                  if (req.query.city && req.query.state) {
-                        await Hospital.find({
-                              city: { $regex: req.query.city, $options: "i" },
-                              state: { $regex: req.query.state, $options: "i" },
-                        })
-                              .exec()
-                              .then((response) =>
-                                    res.status(200).json({ data: response })
-                              )
-                              .catch((err) => res.status(400).json(err));
+                  } else {
+                        res.status(400).json({
+                              data: { error: "Bad Request" },
+                        });
                   }
             }
       } catch (err) {
-            res.status(400).json({ message: err });
+            res.status(400).json({ data: { error: "Bad Request" } });
       }
 });
 
