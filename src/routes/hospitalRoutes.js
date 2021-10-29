@@ -7,10 +7,13 @@ router.get("/", async (req, res) => {
       try {
             // All hospitals
             // If nothing in the query string
-
             if (Object.keys(req.query).length === 0) {
-                  const hospitalInfo = await Hospital.find();
-                  res.status(200).json(hospitalInfo);
+                  const hospitalInfo = await Hospital.find()
+                        .exec()
+                        .then((response) =>
+                              res.status(200).json({ data: response })
+                        )
+                        .catch((err) => res.status(400).json(err));
             }
             // If something in the query string, lets read the query string and find accordingly
             else {
@@ -23,7 +26,7 @@ router.get("/", async (req, res) => {
                         })
                               .exec()
                               .then((response) =>
-                                    res.status(200).json(response)
+                                    res.status(200).json({ data: response })
                               )
                               .catch((err) => res.status(400).json(err));
                   }
@@ -35,7 +38,7 @@ router.get("/", async (req, res) => {
                         })
                               .exec()
                               .then((response) =>
-                                    res.status(200).json(response)
+                                    res.status(200).json({ data: response })
                               )
                               .catch((err) => res.status(400).json(err));
                   }
@@ -50,7 +53,7 @@ router.get("/", async (req, res) => {
                         })
                               .exec()
                               .then((response) =>
-                                    res.status(200).json(response)
+                                    res.status(200).json({ data: response })
                               )
                               .catch((err) => res.status(400).json(err));
                   }
@@ -65,7 +68,7 @@ router.get("/", async (req, res) => {
                         })
                               .exec()
                               .then((response) =>
-                                    res.status(200).json(response)
+                                    res.status(200).json({ data: response })
                               )
                               .catch((err) => res.status(400).json(err));
                   }
@@ -80,7 +83,7 @@ router.get("/", async (req, res) => {
                         })
                               .exec()
                               .then((response) =>
-                                    res.status(200).json(response)
+                                    res.status(200).json({ data: response })
                               )
                               .catch((err) => res.status(400).json(err));
                   }
@@ -95,7 +98,7 @@ router.get("/", async (req, res) => {
                         })
                               .exec()
                               .then((response) =>
-                                    res.status(200).json(response)
+                                    res.status(200).json({ data: response })
                               )
                               .catch((err) => res.status(400).json(err));
                   }
@@ -110,7 +113,7 @@ router.get("/", async (req, res) => {
                         })
                               .exec()
                               .then((response) =>
-                                    res.status(200).json(response)
+                                    res.status(200).json({ data: response })
                               )
                               .catch((err) => res.status(400).json(err));
                   }
@@ -123,7 +126,7 @@ router.get("/", async (req, res) => {
                         })
                               .exec()
                               .then((response) =>
-                                    res.status(200).json(response)
+                                    res.status(200).json({ data: response })
                               )
                               .catch((err) => res.status(400).json(err));
                   }
