@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const helmet = require("helmet");
 
 const bodyParser = require("body-parser");
 
@@ -19,11 +20,17 @@ server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 
 // Import our routes
-const v1URI = "/api/v1/hospitals";
 
 // Hospital routes
 const hospitalRoutes = require("./src/routes/hospitalRoutes");
-server.use(v1URI, hospitalRoutes);
+server.use("/hospitals", hospitalRoutes);
+
+// API key routes
+const apiKeyRoutes = require("./src/routes/apiKeyRoutes");
+server.use("/apikeys", apiKeyRoutes);
+
+// Helmet helps secure Express apps, securing HTTP headers
+server.use(helmet());
 
 // set port, listen for requests
 const PORT = process.env.PORT || 5556;
@@ -32,7 +39,7 @@ server.listen(PORT, () => {
 });
 
 const mongoose = require("mongoose");
-const { application } = require("express");
+//const { application } = require("express");
 
 // Get MongoDB connection string
 require("dotenv").config();
