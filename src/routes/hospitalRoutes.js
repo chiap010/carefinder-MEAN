@@ -3,23 +3,19 @@ const router = express.Router();
 
 const Hospital = require("../models/Hospital");
 
-// All hospitals
 router.get("/", async (req, res) => {
-      //res.send("test");
       try {
+            // All hospitals
             // If nothing in the query string
-            console.log("query length:  " + Object.keys(req.query).length);
+
             if (Object.keys(req.query).length === 0) {
                   const hospitalInfo = await Hospital.find();
                   res.status(200).json(hospitalInfo);
-                  //res.send("test");
             }
-            // If something in the query string, lets read it out
+            // If something in the query string, lets read the query string and find accordingly
             else {
+                  // If city name is part of the query string
                   if (req.query.city) {
-                        //const hospitalInfo = await Hospital.findById(req.query.city);
-                        //res.status(200).json(hospitalInfo);
-
                         await Hospital.find({
                               city: { $regex: req.query.city, $options: "i" },
                         })
@@ -27,19 +23,98 @@ router.get("/", async (req, res) => {
                               .then((response) =>
                                     res.status(200).json(response)
                               )
-                              .catch((err) =>
-                                    errorHandler.createError(
-                                          400,
-                                          err.code,
-                                          res,
-                                          err.message
-                                    )
-                              );
+                              .catch((err) => res.status(400).json(err));
+                  }
+
+                  // If state is part of the query string
+                  if (req.query.state) {
+                        await Hospital.find({
+                              state: { $regex: req.query.state, $options: "i" },
+                        })
+                              .exec()
+                              .then((response) =>
+                                    res.status(200).json(response)
+                              )
+                              .catch((err) => res.status(400).json(err));
+                  }
+
+                  // If county name is part of the query string
+                  if (req.query.county) {
+                        await Hospital.find({
+                              county_name: {
+                                    $regex: req.query.county,
+                                    $options: "i",
+                              },
+                        })
+                              .exec()
+                              .then((response) =>
+                                    res.status(200).json(response)
+                              )
+                              .catch((err) => res.status(400).json(err));
+                  }
+
+                  // If hospital name is part of the query string
+                  if (req.query.name) {
+                        await Hospital.find({
+                              hospital_name: {
+                                    $regex: req.query.name,
+                                    $options: "i",
+                              },
+                        })
+                              .exec()
+                              .then((response) =>
+                                    res.status(200).json(response)
+                              )
+                              .catch((err) => res.status(400).json(err));
+                  }
+
+                  // If hospital type is part of the query string
+                  if (req.query.type) {
+                        await Hospital.find({
+                              hospital_type: {
+                                    $regex: req.query.type,
+                                    $options: "i",
+                              },
+                        })
+                              .exec()
+                              .then((response) =>
+                                    res.status(200).json(response)
+                              )
+                              .catch((err) => res.status(400).json(err));
+                  }
+
+                  // If hospital ownership is part of the query string
+                  if (req.query.ownership) {
+                        await Hospital.find({
+                              hospital_ownership: {
+                                    $regex: req.query.ownership,
+                                    $options: "i",
+                              },
+                        })
+                              .exec()
+                              .then((response) =>
+                                    res.status(200).json(response)
+                              )
+                              .catch((err) => res.status(400).json(err));
+                  }
+
+                  // If emergency services is part of the query string
+                  if (req.query.emergency) {
+                        await Hospital.find({
+                              emergency_services: {
+                                    $regex: req.query.emergency,
+                                    $options: "i",
+                              },
+                        })
+                              .exec()
+                              .then((response) =>
+                                    res.status(200).json(response)
+                              )
+                              .catch((err) => res.status(400).json(err));
                   }
             }
       } catch (err) {
-            res.json({ message: err });
-            console.log(err);
+            res.status(400).json({ message: err });
       }
 });
 
