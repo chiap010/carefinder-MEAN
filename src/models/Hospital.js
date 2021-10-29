@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const schema = mongoose.Schema;
 
 const hospitalSchema = new schema({
+      _id: { type: String },
       provider_id: { type: String },
       hospital_name: { type: String, trim: true },
       address: { type: String, trim: true },

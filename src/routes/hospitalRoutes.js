@@ -8,23 +8,35 @@ router.get("/", async (req, res) => {
       //res.send("test");
       try {
             // If nothing in the query string
-
-            //if (!req.query) {
-            const hospitalInfo = await Hospital.find();
-            res.status(200).json(hospitalInfo);
-            //res.send("test");
-            //}
+            console.log("query length:  " + Object.keys(req.query).length);
+            if (Object.keys(req.query).length === 0) {
+                  const hospitalInfo = await Hospital.find();
+                  res.status(200).json(hospitalInfo);
+                  //res.send("test");
+            }
             // If something in the query string, lets read it out
-            /*
             else {
                   if (req.query.city) {
-                        const hospitalInfo = await Hospital.findById(
-                              req.query.city
-                        );
-                        res.status(200).json(hospitalInfo);
+                        //const hospitalInfo = await Hospital.findById(req.query.city);
+                        //res.status(200).json(hospitalInfo);
+
+                        await Hospital.find({
+                              city: { $regex: req.query.city, $options: "i" },
+                        })
+                              .exec()
+                              .then((response) =>
+                                    res.status(200).json(response)
+                              )
+                              .catch((err) =>
+                                    errorHandler.createError(
+                                          400,
+                                          err.code,
+                                          res,
+                                          err.message
+                                    )
+                              );
                   }
             }
-            */
       } catch (err) {
             res.json({ message: err });
             console.log(err);
