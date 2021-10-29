@@ -1,5 +1,7 @@
 const express = require("express");
+const { http400 } = require("../helpers/string-resources");
 const router = express.Router();
+const stringResources = require("../helpers/string-resources");
 
 const Hospital = require("../models/Hospital");
 
@@ -41,8 +43,7 @@ router.get("/", async (req, res) => {
                               )
                               .catch((err) => res.status(400).json(err));
                   } else if (req.query.state && !req.query.city) {
-
-                  /*
+                        /*
                   if (req.query.state && !req.query.city) {
                         await Hospital.find({
                               state: { $regex: req.query.state, $options: "i" },
@@ -54,23 +55,27 @@ router.get("/", async (req, res) => {
                               .catch((err) => res.status(400).json(err));
                   }
                   */
-                        const hospital = await Hospital.find({
+                        const hospitalQuery = await Hospital.find({
                               state: { $regex: req.query.state, $options: "i" },
                         }).exec();
-                        if (hospital && hospital.length > 0) {
-                              res.status(200).json({ data: hospital });
-                        } else if (hospital && hospital.length === 0) {
+                        if (hospitalQuery && hospitalQuery.length > 0) {
+                              res.status(200).json({ data: hospitalQuery });
+                        } else if (
+                              hospitalQuery &&
+                              hospitalQuery.length === 0
+                        ) {
                               res.status(404).json({
                                     data: {
                                           error:
-                                                "Returned no records for state:  " +
+                                                stringResources.http404 +
+                                                " - State: " +
                                                 req.query.state,
                                     },
                               });
                         } else {
                               res.status(400).json({
                                     data: {
-                                          error: "Bad Request",
+                                          error: http400,
                                     },
                               });
                         }
@@ -151,12 +156,16 @@ router.get("/", async (req, res) => {
                               .catch((err) => res.status(400).json(err));
                   } else {
                         res.status(400).json({
-                              data: { error: "Bad Request" },
+                              data: {
+                                    error: stringResources.http400,
+                              },
                         });
                   }
             }
       } catch (err) {
-            res.status(400).json({ data: { error: "Bad Request" } });
+            res.status(400).json({
+                  data: { error: stringResources.http400 },
+            });
       }
 });
 
