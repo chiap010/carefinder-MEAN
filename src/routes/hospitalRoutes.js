@@ -15,7 +15,9 @@ router.get("/", async (req, res) => {
             // If something in the query string, lets read the query string and find accordingly
             else {
                   // If city name is part of the query string
-                  if (req.query.city) {
+
+                  // TO DOs-- needs 404s
+                  if (req.query.city && !req.query.state) {
                         await Hospital.find({
                               city: { $regex: req.query.city, $options: "i" },
                         })
@@ -27,7 +29,7 @@ router.get("/", async (req, res) => {
                   }
 
                   // If state is part of the query string
-                  if (req.query.state) {
+                  if (req.query.state && !req.query.city) {
                         await Hospital.find({
                               state: { $regex: req.query.state, $options: "i" },
                         })
@@ -105,6 +107,19 @@ router.get("/", async (req, res) => {
                                     $regex: req.query.emergency,
                                     $options: "i",
                               },
+                        })
+                              .exec()
+                              .then((response) =>
+                                    res.status(200).json(response)
+                              )
+                              .catch((err) => res.status(400).json(err));
+                  }
+
+                  // If city and state are part of the query string
+                  if (req.query.city && req.query.state) {
+                        await Hospital.find({
+                              city: { $regex: req.query.city, $options: "i" },
+                              state: { $regex: req.query.state, $options: "i" },
                         })
                               .exec()
                               .then((response) =>
