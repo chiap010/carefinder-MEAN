@@ -5,12 +5,13 @@ const schemaOptions = {
       timestamp: true,
 };
 
-const ApiKeySchema = new schema({
+const UserSchema = new schema({
       username: { type: String },
       api_key: { type: String },
       privilege: { type: Number },
+      createdAt: { type: Date, default: Date.now },
 });
 
-const sch = new mongoose.Schema(ApiKeySchema, schemaOptions);
+const sch = new mongoose.Schema(UserSchema, schemaOptions);
 
-module.exports = mongoose.model("api_keys", sch);
+module.exports = mongoose.model("users", sch);

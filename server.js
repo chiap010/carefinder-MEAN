@@ -26,8 +26,8 @@ const hospitalRoutes = require("./src/routes/hospitalRoutes");
 server.use("/hospitals", hospitalRoutes);
 
 // API key routes
-const apiKeyRoutes = require("./src/routes/apiKeyRoutes");
-server.use("/apikeys", apiKeyRoutes);
+const userRoutes = require("./src/routes/userRoutes");
+server.use("/users", userRoutes);
 
 // Helmet helps secure Express apps, securing HTTP headers
 server.use(helmet());
