@@ -9,6 +9,7 @@ const userHasAdminPermission = require("../helpers/userHasAdminPermission.js");
 
 router.get("/", async (req, res) => {
       let userPermission = "NONE";
+      let apiKeyHeaderValue = "";
 
       if (req.get("X-API-KEY") !== undefined) {
             apiKeyHeaderValue = req.get("X-API-KEY");
@@ -27,15 +28,54 @@ router.get("/", async (req, res) => {
       try {
             console.log(authenticated);
             console.log(userHasAdminPermission(userPermission));
+            console.log(req.query.key);
 
             if (authenticated && userHasAdminPermission(userPermission)) {
                   if (Object.keys(req.query).length === 0) {
-                        const userQuery = await User.find()
-                              .exec()
-                              .then((response) =>
-                                    res.status(200).json({ data: response })
-                              )
-                              .catch((err) => res.status(401).json(err));
+                        const userQuery = await User.find().exec();
+                        if (userQuery && userQuery.length > 0) {
+                              res.status(200).json({
+                                    data: userQuery,
+                              });
+                        } else if (userQuery && userQuery.length === 0) {
+                              res.status(404).json({
+                                    data: {
+                                          error:
+                                                stringResources.http404 +
+                                                " - Returned no API user accounts.",
+                                    },
+                              });
+                        } else {
+                              res.status(400).json({
+                                    data: {
+                                          error: stringResources.http400,
+                                    },
+                              });
+                        }
+                  } else if (req.query.key) {
+                        const userQuery = await User.find({
+                              api_key: req.query.key,
+                        }).exec();
+
+                        if (userQuery && userQuery.length > 0) {
+                              res.status(200).json({
+                                    data: userQuery,
+                              });
+                        } else if (userQuery && userQuery.length === 0) {
+                              res.status(404).json({
+                                    data: {
+                                          error:
+                                                stringResources.http404 +
+                                                " - Returned no API user accounts.",
+                                    },
+                              });
+                        } else {
+                              res.status(400).json({
+                                    data: {
+                                          error: stringResources.http400,
+                                    },
+                              });
+                        }
                   }
             } else {
                   res.status(401).json({

@@ -8,7 +8,7 @@ const schemaOptions = {
 const UserSchema = new schema({
       username: { type: String },
       api_key: { type: String },
-      privilege: { type: Number },
+      permission: { type: String },
       createdAt: { type: Date, default: Date.now },
 });
 

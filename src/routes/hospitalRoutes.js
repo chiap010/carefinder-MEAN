@@ -2,6 +2,8 @@ const express = require("express");
 const { http400 } = require("../helpers/string-resources");
 const router = express.Router();
 const stringResources = require("../helpers/string-resources");
+const userHasReadPermission = require("../helpers/userHasReadPermission.js");
+const userHasAdminPermission = require("../helpers/userHasAdminPermission.js");
 
 const Hospital = require("../models/Hospital");
 const User = require("../models/User");
@@ -9,21 +11,24 @@ const User = require("../models/User");
 router.get("/", async (req, res) => {
       let apiKeyHeaderValue = "";
 
+      let userPermission = "NONE";
+
       if (req.get("X-API-KEY") !== undefined) {
             apiKeyHeaderValue = req.get("X-API-KEY");
       }
-      console.log("Key header value " + apiKeyHeaderValue);
+
       const userQuery = await User.find({ api_key: apiKeyHeaderValue }).exec();
       let authenticated = false;
       if (userQuery && userQuery.length === 1) {
             authenticated = true;
-            console.log("Authenticated.");
-            //console.log(userQuery);
+
+            if (userQuery[0].permission) {
+                  userPermission = userQuery[0].permission;
+            }
       }
-      console.log("User query length: " + userQuery.length);
 
       try {
-            if (authenticated) {
+            if (authenticated && userHasReadPermission(userPermission)) {
                   // All hospitals
                   // If nothing in the query string
                   if (Object.keys(req.query).length === 0) {
