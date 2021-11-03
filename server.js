@@ -7,10 +7,20 @@ const bodyParser = require("body-parser");
 const server = express();
 
 var corsOptions = {
-      origin: "http://localhost",
+      //origin: "http://localhost:3000",
+      origin: "*",
+      // allowedHeaders: ["X-API-KEY", "Content-Type"], // you can change the headers
+      // exposedHeaders: ["X-API-KEY", "Content-Type"], // you can change the headers
 };
 
 server.use(cors(corsOptions));
+
+/*
+server.all("/", function (req, res, next) {
+      res.header("Access-Control-Allow-Headers", "X-API-KEY");
+      next();
+});
+*/
 
 // parse requests of content-type - application/json
 // server.use(bodyParser.json()); - call  not used because it's deprecated.

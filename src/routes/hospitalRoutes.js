@@ -5,6 +5,9 @@ const stringResources = require("../helpers/string-resources");
 const userHasReadPermission = require("../helpers/userHasReadPermission.js");
 const userHasAdminPermission = require("../helpers/userHasAdminPermission.js");
 
+const AllHospitals = require("../controllers/AllHospitals");
+const HospitalsByCityAndState = require("../controllers/HospitalsByCityAndState");
+
 const Hospital = require("../models/Hospital");
 const User = require("../models/User");
 
@@ -28,56 +31,19 @@ router.get("/", async (req, res) => {
       }
 
       try {
+            // console.log(JSON.stringify(req.headers));
+
             if (authenticated && userHasReadPermission(userPermission)) {
                   // All hospitals
                   // If nothing in the query string
                   if (Object.keys(req.query).length === 0) {
-                        const hospitalInfo = await Hospital.find()
-                              .exec()
-                              .then((response) =>
-                                    res.status(200).json({ data: response })
-                              )
-                              .catch((err) => res.status(400).json(err));
+                        AllHospitals(req, res);
                   }
                   // If something in the query string, lets read the query string and find accordingly
                   else {
                         // If city and state are part of the query string
                         if (req.query.city && req.query.state) {
-                              const hospitalQuery = await Hospital.find({
-                                    city: {
-                                          $regex: req.query.city,
-                                          $options: "i",
-                                    },
-                                    state: {
-                                          $regex: req.query.state,
-                                          $options: "i",
-                                    },
-                              }).exec();
-                              if (hospitalQuery && hospitalQuery.length > 0) {
-                                    res.status(200).json({
-                                          data: hospitalQuery,
-                                    });
-                              } else if (
-                                    hospitalQuery &&
-                                    hospitalQuery.length === 0
-                              ) {
-                                    res.status(404).json({
-                                          data: {
-                                                error:
-                                                      stringResources.http404 +
-                                                      " - City: " +
-                                                      req.query.city +
-                                                      " - State: " +
-                                                      req.query.state,
-                                          },
-                                    });
-                              } else {
-                                    res.status(400).json({
-                                          data: {
-                                                error: stringResources.http400,
-                                          },
-                                    });
-                              }
+                              HospitalsByCityAndState(req, res);
                         }
 
                         // If city name is part of the query string, but not state
@@ -374,10 +340,12 @@ router.get("/", async (req, res) => {
                                           },
                                     });
                               }
-                        } else {
-                              res.status(400).json({
-                                    data: { error: stringResources.http400 },
-                              });
+                        } else if (
+                              req.query.lat &&
+                              req.query.long &&
+                              req.query.dist
+                        ) {
+                              // Extra credit - Not implemented yet
                         }
                   }
             } else {
