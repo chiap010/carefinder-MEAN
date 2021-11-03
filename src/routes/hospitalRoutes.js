@@ -10,6 +10,12 @@ const HospitalsByCityAndState = require("../controllers/HospitalsByCityAndState"
 
 const Hospital = require("../models/Hospital");
 const User = require("../models/User");
+const HospitalsByCity = require("../controllers/HospitalsByCity");
+const HospitalsByCounty = require("../controllers/HospitalsByCounty");
+const HospitalsByHospitalType = require("../controllers/HospitalsByHospitalType");
+const HospitalsByHospitalOwnership = require("../controllers/HospitalsByHospitalOwnership");
+const HospitalsByEmergencyServices = require("../controllers/HospitalsByEmergencyServices");
+const HospitalsByProviderID = require("../controllers/HospitalsByProviderID");
 
 router.get("/", async (req, res) => {
       let apiKeyHeaderValue = "";
@@ -48,298 +54,46 @@ router.get("/", async (req, res) => {
 
                         // If city name is part of the query string, but not state
                         else if (req.query.city && !req.query.state) {
-                              const hospitalQuery = await Hospital.find({
-                                    city: {
-                                          $regex: req.query.city,
-                                          $options: "i",
-                                    },
-                              }).exec();
-                              if (hospitalQuery && hospitalQuery.length > 0) {
-                                    res.status(200).json({
-                                          data: hospitalQuery,
-                                    });
-                              } else if (
-                                    hospitalQuery &&
-                                    hospitalQuery.length === 0
-                              ) {
-                                    res.status(404).json({
-                                          data: {
-                                                error:
-                                                      stringResources.http404 +
-                                                      " - City: " +
-                                                      req.query.city,
-                                          },
-                                    });
-                              } else {
-                                    res.status(400).json({
-                                          data: {
-                                                error: stringResources.http400,
-                                          },
-                                    });
-                              }
+                              HospitalsByCity(req, res);
                         }
                         // If state is part of the query string, but not city
                         else if (req.query.state && !req.query.city) {
-                              const hospitalQuery = await Hospital.find({
-                                    state: {
-                                          $regex: req.query.state,
-                                          $options: "i",
-                                    },
-                              }).exec();
-                              if (hospitalQuery && hospitalQuery.length > 0) {
-                                    res.status(200).json({
-                                          data: hospitalQuery,
-                                    });
-                              } else if (
-                                    hospitalQuery &&
-                                    hospitalQuery.length === 0
-                              ) {
-                                    res.status(404).json({
-                                          data: {
-                                                error:
-                                                      stringResources.http404 +
-                                                      " - State: " +
-                                                      req.query.state,
-                                          },
-                                    });
-                              } else {
-                                    res.status(400).json({
-                                          data: {
-                                                error: stringResources.http400,
-                                          },
-                                    });
-                              }
+                              HospitalsByState(req, res);
                         }
 
                         // If county name is part of the query string
                         else if (req.query.county) {
-                              const hospitalQuery = await Hospital.find({
-                                    county_name: {
-                                          $regex: req.query.county,
-                                          $options: "i",
-                                    },
-                              }).exec();
-                              if (hospitalQuery && hospitalQuery.length > 0) {
-                                    res.status(200).json({
-                                          data: hospitalQuery,
-                                    });
-                              } else if (
-                                    hospitalQuery &&
-                                    hospitalQuery.length === 0
-                              ) {
-                                    res.status(404).json({
-                                          data: {
-                                                error:
-                                                      stringResources.http404 +
-                                                      " - County: " +
-                                                      req.query.county,
-                                          },
-                                    });
-                              } else {
-                                    res.status(400).json({
-                                          data: {
-                                                error: stringResources.http400,
-                                          },
-                                    });
-                              }
+                              HospitalsByCounty(req, res);
                         }
 
                         // If hospital name is part of the query string
                         else if (req.query.name) {
-                              const hospitalQuery = await Hospital.find({
-                                    hospital_name: {
-                                          $regex: req.query.name,
-                                          $options: "i",
-                                    },
-                              }).exec();
-                              if (hospitalQuery && hospitalQuery.length > 0) {
-                                    res.status(200).json({
-                                          data: hospitalQuery,
-                                    });
-                              } else if (
-                                    hospitalQuery &&
-                                    hospitalQuery.length === 0
-                              ) {
-                                    res.status(404).json({
-                                          data: {
-                                                error:
-                                                      stringResources.http404 +
-                                                      " - Hospital Name: " +
-                                                      req.query.name,
-                                          },
-                                    });
-                              } else {
-                                    res.status(400).json({
-                                          data: {
-                                                error: stringResources.http400,
-                                          },
-                                    });
-                              }
+                              HospitalsByHospitalName(req, res);
                         }
 
                         // If hospital type is part of the query string
                         else if (req.query.type) {
-                              const hospitalQuery = await Hospital.find({
-                                    hospital_type: {
-                                          $regex: req.query.type,
-                                          $options: "i",
-                                    },
-                              }).exec();
-                              if (hospitalQuery && hospitalQuery.length > 0) {
-                                    res.status(200).json({
-                                          data: hospitalQuery,
-                                    });
-                              } else if (
-                                    hospitalQuery &&
-                                    hospitalQuery.length === 0
-                              ) {
-                                    res.status(404).json({
-                                          data: {
-                                                error:
-                                                      stringResources.http404 +
-                                                      " - Hospital Type: " +
-                                                      req.query.type,
-                                          },
-                                    });
-                              } else {
-                                    res.status(400).json({
-                                          data: {
-                                                error: stringResources.http400,
-                                          },
-                                    });
-                              }
+                              HospitalsByHospitalType(req, res);
                         }
 
                         // If hospital ownership is part of the query string
                         else if (req.query.ownership) {
-                              const hospitalQuery = await Hospital.find({
-                                    hospital_ownership: {
-                                          $regex: req.query.ownership,
-                                          $options: "i",
-                                    },
-                              }).exec();
-                              if (hospitalQuery && hospitalQuery.length > 0) {
-                                    res.status(200).json({
-                                          data: hospitalQuery,
-                                    });
-                              } else if (
-                                    hospitalQuery &&
-                                    hospitalQuery.length === 0
-                              ) {
-                                    res.status(404).json({
-                                          data: {
-                                                error:
-                                                      stringResources.http404 +
-                                                      " - Ownership: " +
-                                                      req.query.ownership,
-                                          },
-                                    });
-                              } else {
-                                    res.status(400).json({
-                                          data: {
-                                                error: stringResources.http400,
-                                          },
-                                    });
-                              }
+                              HospitalsByHospitalOwnership(req, res);
                         }
 
                         // If emergency services is part of the query string
                         else if (req.query.emergency) {
-                              const hospitalQuery = await Hospital.find({
-                                    emergency_services: {
-                                          $regex: req.query.emergency,
-                                          $options: "i",
-                                    },
-                              }).exec();
-                              if (hospitalQuery && hospitalQuery.length > 0) {
-                                    res.status(200).json({
-                                          data: hospitalQuery,
-                                    });
-                              } else if (
-                                    hospitalQuery &&
-                                    hospitalQuery.length === 0
-                              ) {
-                                    res.status(404).json({
-                                          data: {
-                                                error:
-                                                      stringResources.http404 +
-                                                      " - Emergency Services: " +
-                                                      req.query.emergency,
-                                          },
-                                    });
-                              } else {
-                                    res.status(400).json({
-                                          data: {
-                                                error: stringResources.http400,
-                                          },
-                                    });
-                              }
+                              HospitalsByEmergencyServices(req, res);
                         }
 
                         // If provider ID is part of the query string
                         else if (req.query.providerId) {
-                              const hospitalQuery = await Hospital.find({
-                                    provider_id: {
-                                          $regex: req.query.providerId,
-                                          $options: "i",
-                                    },
-                              }).exec();
-                              if (hospitalQuery && hospitalQuery.length > 0) {
-                                    res.status(200).json({
-                                          data: hospitalQuery,
-                                    });
-                              } else if (
-                                    hospitalQuery &&
-                                    hospitalQuery.length === 0
-                              ) {
-                                    res.status(404).json({
-                                          data: {
-                                                error:
-                                                      stringResources.http404 +
-                                                      " - Provider ID: " +
-                                                      req.query.providerId,
-                                          },
-                                    });
-                              } else {
-                                    res.status(400).json({
-                                          data: {
-                                                error: stringResources.http400,
-                                          },
-                                    });
-                              }
+                              HospitalsByProviderID(req, res);
                         }
 
                         // If emergency services is part of the query string
                         else if (req.query.zipCode) {
-                              const hospitalQuery = await Hospital.find({
-                                    zip_code: {
-                                          $regex: req.query.zipCode,
-                                          $options: "i",
-                                    },
-                              }).exec();
-                              if (hospitalQuery && hospitalQuery.length > 0) {
-                                    res.status(200).json({
-                                          data: hospitalQuery,
-                                    });
-                              } else if (
-                                    hospitalQuery &&
-                                    hospitalQuery.length === 0
-                              ) {
-                                    res.status(404).json({
-                                          data: {
-                                                error:
-                                                      stringResources.http404 +
-                                                      " - Zip Code: " +
-                                                      req.query.zipCode,
-                                          },
-                                    });
-                              } else {
-                                    res.status(400).json({
-                                          data: {
-                                                error: stringResources.http400,
-                                          },
-                                    });
-                              }
+                              HospitalsByZipCode(req, res);
                         } else if (
                               req.query.lat &&
                               req.query.long &&
