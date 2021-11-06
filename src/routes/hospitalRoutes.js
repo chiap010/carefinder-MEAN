@@ -20,6 +20,7 @@ const HospitalsByEmergencyServices = require("../controllers/HospitalsByEmergenc
 const HospitalsByProviderID = require("../controllers/HospitalsByProviderID");
 const HospitalsByRadius = require("../controllers/HospitalsByRadius");
 const HospitalsByState = require("../controllers/HospitalsByState");
+const HospitalsByZipCode = require("../controllers/HospitalsByZipCode");
 
 router.get("/", async (req, res) => {
       let apiKeyHeaderValue = "";
