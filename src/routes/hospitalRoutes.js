@@ -1,21 +1,25 @@
 const express = require("express");
 const { http400 } = require("../helpers/string-resources");
 const router = express.Router();
+
 const stringResources = require("../helpers/string-resources");
+
 const userHasReadPermission = require("../helpers/userHasReadPermission.js");
 const userHasAdminPermission = require("../helpers/userHasAdminPermission.js");
 
-const AllHospitals = require("../controllers/AllHospitals");
-const HospitalsByCityAndState = require("../controllers/HospitalsByCityAndState");
-
 const Hospital = require("../models/Hospital");
 const User = require("../models/User");
+
+const AllHospitals = require("../controllers/AllHospitals");
+const HospitalsByCityAndState = require("../controllers/HospitalsByCityAndState");
 const HospitalsByCity = require("../controllers/HospitalsByCity");
 const HospitalsByCounty = require("../controllers/HospitalsByCounty");
 const HospitalsByHospitalType = require("../controllers/HospitalsByHospitalType");
 const HospitalsByHospitalOwnership = require("../controllers/HospitalsByHospitalOwnership");
 const HospitalsByEmergencyServices = require("../controllers/HospitalsByEmergencyServices");
 const HospitalsByProviderID = require("../controllers/HospitalsByProviderID");
+const HospitalsByRadius = require("../controllers/HospitalsByRadius");
+const HospitalsByState = require("../controllers/HospitalsByState");
 
 router.get("/", async (req, res) => {
       let apiKeyHeaderValue = "";
@@ -39,9 +43,10 @@ router.get("/", async (req, res) => {
       try {
             // console.log(JSON.stringify(req.headers));
 
+            // We only want to send the request through only if the person accessing
+            // the API is authenticated AND has a READ permission.
             if (authenticated && userHasReadPermission(userPermission)) {
-                  // All hospitals
-                  // If nothing in the query string
+                  // All hospitals -- If nothing in the query string
                   if (Object.keys(req.query).length === 0) {
                         AllHospitals(req, res);
                   }
@@ -96,21 +101,25 @@ router.get("/", async (req, res) => {
                               HospitalsByZipCode(req, res);
                         } else if (
                               req.query.lat &&
-                              req.query.long &&
+                              req.query.lon &&
                               req.query.dist
                         ) {
+                              console.log(req.query.lon);
                               // Extra credit - Not implemented yet
+                              HospitalsByRadius(req, res);
                         }
                   }
             } else {
                   res.status(401).json({
                         data: { error: stringResources.http401 },
                   });
+                  console.log("AAA");
             }
       } catch (err) {
             res.status(400).json({
                   data: { error: stringResources.http400 },
             });
+            console.log("BBB");
       }
 });
 
