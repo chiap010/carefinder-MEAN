@@ -6,7 +6,6 @@ const schemaOptions = {
 };
 
 const hospitalSchema = new schema({
-      _id: { type: String },
       provider_id: { type: String },
       hospital_name: { type: String, trim: true },
       address: { type: String, trim: true },
@@ -21,15 +20,6 @@ const hospitalSchema = new schema({
       human_address: { type: String, trim: true },
       latitude: { type: Number },
       longitude: { type: Number },
-      needs_recoding: { type: String, trim: true },
-      geoloc: {
-            type: {
-                  type: "String",
-            },
-            coordinates: {
-                  type: ["Double"],
-            },
-      },
 });
 
 const sch = new mongoose.Schema(hospitalSchema, schemaOptions);
