@@ -21,6 +21,7 @@ const HospitalsByProviderID = require("../controllers/HospitalsByProviderID");
 const HospitalsByRadius = require("../controllers/HospitalsByRadius");
 const HospitalsByState = require("../controllers/HospitalsByState");
 const HospitalsByZipCode = require("../controllers/HospitalsByZipCode");
+const HospitalsByHospitalName = require("../controllers/HospitalsByHospitalName");
 
 router.get("/", async (req, res) => {
       let apiKeyHeaderValue = "";
@@ -49,7 +50,7 @@ router.get("/", async (req, res) => {
             if (authenticated && userHasReadPermission(userPermission)) {
                   // All hospitals -- If nothing in the query string
                   if (Object.keys(req.query).length === 0) {
-                        AllHospitals(req, res);
+                        AllHospitals(req, res, "GET");
                   }
                   // If something in the query string, lets read the query string and find accordingly
                   else {
@@ -94,19 +95,19 @@ router.get("/", async (req, res) => {
 
                         // If provider ID is part of the query string
                         else if (req.query.providerId) {
-                              HospitalsByProviderID(req, res);
+                              HospitalsByProviderID(req, res, "GET");
                         }
 
-                        // If emergency services is part of the query string
+                        // If zip code is part of the query string
                         else if (req.query.zipCode) {
                               HospitalsByZipCode(req, res);
-                        } else if (
+                        }
+                        // If latitude, longitude, and distance are part fo the query string
+                        else if (
                               req.query.lat &&
                               req.query.lon &&
                               req.query.dist
                         ) {
-                              console.log(req.query.lon);
-                              // Extra credit - Not implemented yet
                               HospitalsByRadius(req, res);
                         }
                   }
@@ -114,13 +115,98 @@ router.get("/", async (req, res) => {
                   res.status(401).json({
                         data: { error: stringResources.http401 },
                   });
-                  console.log("AAA");
             }
       } catch (err) {
             res.status(400).json({
                   data: { error: stringResources.http400 },
             });
-            console.log("BBB");
+      }
+});
+
+router.post("/", async (req, res) => {
+      let apiKeyHeaderValue = "";
+
+      let userPermission = "NONE";
+
+      if (req.get("X-API-KEY") !== undefined) {
+            apiKeyHeaderValue = req.get("X-API-KEY");
+      }
+      const userQuery = await User.find({ api_key: apiKeyHeaderValue }).exec();
+      let authenticated = false;
+      if (userQuery && userQuery.length === 1) {
+            authenticated = true;
+
+            if (userQuery[0].permission) {
+                  userPermission = userQuery[0].permission;
+            }
+      }
+
+      try {
+            console.log(JSON.stringify(req.headers));
+
+            // We only want to send the request through only if the person accessing
+            // the API is authenticated AND has a ADMIN permission.
+            if (authenticated && userHasAdminPermission(userPermission)) {
+                  // All hospitals -- If nothing in the query string
+                  if (Object.keys(req.query).length === 0) {
+                        AllHospitals(req, res, "POST");
+                  }
+                  // If something in the query string, lets read the query string and find accordingly
+                  else {
+                  }
+            } else {
+                  res.status(401).json({
+                        data: { error: stringResources.http401 },
+                  });
+            }
+      } catch (err) {
+            res.status(400).json({
+                  data: { error: stringResources.http400 },
+            });
+      }
+});
+
+router.delete("/", async (req, res) => {
+      let apiKeyHeaderValue = "";
+
+      let userPermission = "NONE";
+
+      if (req.get("X-API-KEY") !== undefined) {
+            apiKeyHeaderValue = req.get("X-API-KEY");
+      }
+      const userQuery = await User.find({ api_key: apiKeyHeaderValue }).exec();
+      let authenticated = false;
+      if (userQuery && userQuery.length === 1) {
+            authenticated = true;
+
+            if (userQuery[0].permission) {
+                  userPermission = userQuery[0].permission;
+            }
+      }
+
+      try {
+            // We only want to send the request through only if the person accessing
+            // the API is authenticated AND has a ADMIN permission.
+            if (authenticated && userHasAdminPermission(userPermission)) {
+                  // All hospitals -- If nothing in the query string
+                  if (Object.keys(req.query).length === 0) {
+                        AllHospitals(req, res, "DELETE");
+                  }
+                  // If something in the query string, lets read the query string and find accordingly
+                  else {
+                        if (req.query.providerId) {
+                              HospitalsByProviderID(req, res, "DELETE");
+                        }
+                  }
+            } else {
+                  res.status(401).json({
+                        data: { error: stringResources.http401 },
+                  });
+            }
+      } catch (err) {
+            res.status(400).json({
+                  data: { error: stringResources.http400 },
+            });
       }
 });
 
