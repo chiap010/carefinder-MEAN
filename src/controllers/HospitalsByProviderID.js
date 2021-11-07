@@ -32,7 +32,10 @@ module.exports = async function (req, res, method) {
       } else if (method === "DELETE") {
             try {
                   const removePost = await Hospital.deleteMany({
-                        provider_id: req.query.providerId,
+                        provider_id: {
+                              $regex: req.query.providerId,
+                              $options: "i",
+                        },
                   });
                   res.status(200).json(removePost);
             } catch (err) {

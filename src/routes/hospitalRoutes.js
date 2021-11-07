@@ -25,7 +25,7 @@ const HospitalsByHospitalName = require("../controllers/HospitalsByHospitalName"
 
 router.get("/", async (req, res) => {
       let apiKeyHeaderValue = "";
-
+      const method = "GET";
       let userPermission = "NONE";
 
       if (req.get("X-API-KEY") !== undefined) {
@@ -50,7 +50,7 @@ router.get("/", async (req, res) => {
             if (authenticated && userHasReadPermission(userPermission)) {
                   // All hospitals -- If nothing in the query string
                   if (Object.keys(req.query).length === 0) {
-                        AllHospitals(req, res, "GET");
+                        AllHospitals(req, res, method);
                   }
                   // If something in the query string, lets read the query string and find accordingly
                   else {
@@ -61,7 +61,7 @@ router.get("/", async (req, res) => {
 
                         // If city name is part of the query string, but not state
                         else if (req.query.city && !req.query.state) {
-                              HospitalsByCity(req, res);
+                              HospitalsByCity(req, res, method);
                         }
                         // If state is part of the query string, but not city
                         else if (req.query.state && !req.query.city) {
@@ -95,7 +95,7 @@ router.get("/", async (req, res) => {
 
                         // If provider ID is part of the query string
                         else if (req.query.providerId) {
-                              HospitalsByProviderID(req, res, "GET");
+                              HospitalsByProviderID(req, res, method);
                         }
 
                         // If zip code is part of the query string
@@ -125,7 +125,7 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
       let apiKeyHeaderValue = "";
-
+      const method = "POST";
       let userPermission = "NONE";
 
       if (req.get("X-API-KEY") !== undefined) {
@@ -149,7 +149,7 @@ router.post("/", async (req, res) => {
             if (authenticated && userHasAdminPermission(userPermission)) {
                   // All hospitals -- If nothing in the query string
                   if (Object.keys(req.query).length === 0) {
-                        AllHospitals(req, res, "POST");
+                        AllHospitals(req, res, method);
                   }
                   // If something in the query string, lets read the query string and find accordingly
                   else {
@@ -168,7 +168,7 @@ router.post("/", async (req, res) => {
 
 router.delete("/", async (req, res) => {
       let apiKeyHeaderValue = "";
-
+      const method = "DELETE";
       let userPermission = "NONE";
 
       if (req.get("X-API-KEY") !== undefined) {
@@ -190,12 +190,16 @@ router.delete("/", async (req, res) => {
             if (authenticated && userHasAdminPermission(userPermission)) {
                   // All hospitals -- If nothing in the query string
                   if (Object.keys(req.query).length === 0) {
-                        AllHospitals(req, res, "DELETE");
+                        AllHospitals(req, res, method);
                   }
                   // If something in the query string, lets read the query string and find accordingly
                   else {
                         if (req.query.providerId) {
-                              HospitalsByProviderID(req, res, "DELETE");
+                              HospitalsByProviderID(req, res, method);
+                        }
+                        // If city name is part of the query string, but not state
+                        else if (req.query.city && !req.query.state) {
+                              HospitalsByCity(req, res, method);
                         }
                   }
             } else {
